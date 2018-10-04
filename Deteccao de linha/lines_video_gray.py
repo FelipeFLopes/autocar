@@ -16,8 +16,7 @@ while(True):
     # filter colour range we want
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    #low_yellow = np.array([18, 94, 140])
-    #up_yellow = np.array([48, 255, 255])
+
     low_gray = np.array([0])
     up_gray = np.array([100])
     mask = cv2.inRange(gray, low_gray, up_gray)
@@ -36,16 +35,19 @@ while(True):
             cv2.line(frame, (x1, y1), (x2, y2), (0, 255, 0), 3)
 
 
-    ''' Teste a implementar como achar o contorno e centro de massa
+    #Teste a implementar como achar o contorno e centro de massa
 
+
+    #Binariza a imagem
     ret,thresh = cv2.threshold(gray,127,255,0)
 
+    '''
     im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
     cv2.drawContours(frame, contours, -1, (0,0,255), 3)
+    '''
 
-
-    M = cv2.moments(edges)
+    M = cv2.moments(thresh)
 
     xmedio = int(M['m10']/M['m00'])
     ymedio = int(M['m01']/M['m00'])
@@ -69,18 +71,12 @@ while(True):
     print("A distancia em x1 eh " + str(dist1x) )
     print("A distancia em x2 eh " + str(dist2x))
 
-    '''
 
     # Display the resulting frame
     cv2.imshow('mascara',mask)
     cv2.imshow('bordas',edges)
     cv2.imshow('gray',gray)
     cv2.imshow('imagem',frame)
-
-    '''
-    cv2.imshow('imagem',frame)
-    cv2.imshow('hsv',hsv)
-    '''
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
