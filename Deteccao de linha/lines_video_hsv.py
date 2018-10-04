@@ -25,6 +25,8 @@ while(True):
     # This returns an array of r and theta values
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 50, maxLineGap=80)
 
+    res = cv2.bitwise_and(hsv,hsv,mask = mask)
+
     # The below for loop runs till r and theta values
     # are in the range of the 2d array
     if lines is not None:
@@ -33,22 +35,29 @@ while(True):
             cv2.line(frame, (x1, y1), (x2, y2), (0, 255, 0), 3)
 
 
-    ''' Teste a implementar como achar o contorno e centro de massa
+    #Transforma em escala de cinza
+    rgb = cv2.cvtColor(res, cv2.COLOR_HSV2RGB)
+    gray = cv2.cvtColor(res, cv2.COLOR_RGB2GRAY)
 
+    #Binariza a imagem
     ret,thresh = cv2.threshold(gray,127,255,0)
 
+    #Acha contornos
     im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
-    cv2.drawContours(frame, contours, -1, (0,0,255), 3)
+    M = cv2.moments(contours[0])
 
-
-    M = cv2.moments(edges)
-
-    xmedio = int(M['m10']/M['m00'])
-    ymedio = int(M['m01']/M['m00'])
+    if M["m00"] != 0:
+        xmedio = int(M['m10']/M['m00'])
+        ymedio = int(M['m01']/M['m00'])
+    else:
+        xmedio = 0
+        ymedio = 0
 
     print("O x medio eh " + str(xmedio))
     print("O y medio eh " + str(ymedio))
+
+    cv2.circle(frame, (xmedio, ymedio), 5, (255, 255, 255), -1)
 
 
     dist1x = (width/4 - xmedio)
@@ -66,18 +75,12 @@ while(True):
     print("A distancia em x1 eh " + str(dist1x) )
     print("A distancia em x2 eh " + str(dist2x))
 
-    '''
 
     # Display the resulting frame
     cv2.imshow('mascara',mask)
     cv2.imshow('bordas',edges)
-    cv2.imshow('gray',hsv)
+    cv2.imshow('res',res)
     cv2.imshow('imagem',frame)
-
-    '''
-    cv2.imshow('imagem',frame)
-    cv2.imshow('hsv',hsv)
-    '''
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

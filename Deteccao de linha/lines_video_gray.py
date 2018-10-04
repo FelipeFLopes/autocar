@@ -41,11 +41,6 @@ while(True):
     #Binariza a imagem
     ret,thresh = cv2.threshold(gray,127,255,0)
 
-    '''
-    im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-
-    cv2.drawContours(frame, contours, -1, (0,0,255), 3)
-    '''
 
     M = cv2.moments(thresh)
 
@@ -54,6 +49,8 @@ while(True):
 
     print("O x medio eh " + str(xmedio))
     print("O y medio eh " + str(ymedio))
+
+    cv2.circle(frame, (xmedio, ymedio), 5, (255, 255, 255), -1)
 
 
     dist1x = (width/4 - xmedio)
